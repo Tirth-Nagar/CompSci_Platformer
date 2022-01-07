@@ -1,6 +1,7 @@
 import pygame
 from pygame.locals import *
-
+import pickle
+from os import path
 pygame.init()
 
 clock = pygame.time.Clock()
@@ -15,12 +16,15 @@ pygame.display.set_caption("Dreamscape")
 # Define game variables
 tile_size = 50
 game_over = 0
+main_menu = True
+level = 0
 
 # Load images
 sun_img = pygame.image.load("images/sun.png")
 bg_img = pygame.image.load("images/sky.png")
 restart_img = pygame.image.load("images/restart_btn.png")
-
+start_img = pygame.image.load("images/start_btn.png")
+exit_img = pygame.image.load("images/exit_btn.png")
 
 def draw_grid():
     for line in range(0, 20):
@@ -249,40 +253,22 @@ class Lava(pygame.sprite.Sprite):
         self.rect.y = y
 
 
-
-
-world_data = [
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 1],
-    [1, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 7, 0, 0, 0, 0, 0, 2, 2, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 0, 7, 0, 5, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 2, 2, 0, 0, 0, 0, 0, 1],
-    [1, 7, 0, 0, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 0, 0, 7, 0, 0, 0, 0, 1],
-    [1, 0, 2, 0, 0, 7, 0, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 2, 0, 0, 4, 0, 0, 0, 0, 3, 0, 0, 3, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 2, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 0, 7, 0, 0, 0, 0, 2, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 2, 0, 2, 2, 2, 2, 2, 1],
-    [1, 0, 0, 0, 0, 0, 2, 2, 2, 6, 6, 6, 6, 6, 1, 1, 1, 1, 1, 1],
-    [1, 0, 0, 0, 0, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    [1, 0, 0, 0, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    [1, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-]
-
 Player = Player(100, screen_height-130)
 
 lava_group = pygame.sprite.Group()
 enemy_group = pygame.sprite.Group()
 
+# Load in level data and create world
+if path.exists(f"levels/{level}_level_data"):
+    pickle_in = open(f"levels/{level}_level_data", "rb")
+    world_data = pickle.load(pickle_in)
+
 world = World(world_data)
 
 # Create Buttons
 restart_button = Button(screen_width//2-50, screen_height//2 + 100,restart_img)
+start_button = Button(screen_width//2-350, screen_height//2,start_img)
+exit_button = Button(screen_width//2+100, screen_height//2,exit_img)
 
 run = True
 while run:
@@ -290,25 +276,31 @@ while run:
 
     screen.blit(bg_img, (0, 0))
     screen.blit(sun_img, (100, 100))
+    
+    if main_menu == True:
+        if exit_button.draw():
+            run = False
+        if start_button.draw():
+            main_menu = False
+    else:
+        world.draw()
 
-    world.draw()
+        if game_over == 0:
+            enemy_group.update()
 
-    if game_over == 0:
-        enemy_group.update()
+        enemy_group.draw(screen)
+        lava_group.draw(screen)
 
-    enemy_group.draw(screen)
-    lava_group.draw(screen)
+        game_over = Player.update(game_over)
 
-    game_over = Player.update(game_over)
+        # If player has died
+        if game_over == -1:
+            if restart_button.draw():
+                # print("Restart")
+                Player.reset(100,screen_height-130)
+                game_over = 0
 
-    # If player has died
-    if game_over == -1:
-        if restart_button.draw():
-            # print("Restart")
-            Player.reset(100,screen_height-130)
-            game_over = 0
-
-    # draw_grid()
+        # draw_grid()
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
