@@ -137,7 +137,7 @@ class Player:
 
         # Draw player on the screen
         screen.blit(self.image, self.rect)
-        pygame.draw.rect(screen, (255, 255, 255), self.rect, 2)
+        # pygame.draw.rect(screen, (255, 255, 255), self.rect, 2)
 
         return game_over
 
@@ -156,7 +156,7 @@ class World():
             for tile in row:
                 if tile == 1:
                     img = pygame.transform.scale(
-                        dirt_img, (tile_size, tile_size))
+                    dirt_img, (tile_size, tile_size))
                     img_rect = img.get_rect()
                     img_rect.x = col_count*tile_size
                     img_rect.y = row_count*tile_size
@@ -164,7 +164,7 @@ class World():
                     self.tile_list.append(tile)
                 if tile == 2:
                     img = pygame.transform.scale(
-                        grass_img, (tile_size, tile_size))
+                    grass_img, (tile_size, tile_size))
                     img_rect = img.get_rect()
                     img_rect.x = col_count*tile_size
                     img_rect.y = row_count*tile_size
@@ -182,7 +182,7 @@ class World():
     def draw(self):
         for tile in self.tile_list:
             screen.blit(tile[0], tile[1])
-            pygame.draw.rect(screen, (255, 255, 255), tile[1], 2)
+            # pygame.draw.rect(screen, (255, 255, 255), tile[1], 2)
 
 
 class Enemy(pygame.sprite.Sprite):
