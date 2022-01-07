@@ -18,6 +18,7 @@ tile_size = 50
 game_over = 0
 main_menu = True
 level = 0
+max_levels = 7
 
 # Load images
 sun_img = pygame.image.load("images/sun.png")
@@ -25,6 +26,19 @@ bg_img = pygame.image.load("images/sky.png")
 restart_img = pygame.image.load("images/restart_btn.png")
 start_img = pygame.image.load("images/start_btn.png")
 exit_img = pygame.image.load("images/exit_btn.png")
+
+def reset_level(level):
+    Player.reset(100,screen_height-130)
+    enemy_group.empty()
+    lava_group.empty()
+    exit_group.empty()
+    # Load in level data and create world
+    if path.exists(f"levels/{level}_level_data"):
+        pickle_in = open(f"levels/{level}_level_data", "rb")
+        world_data = pickle.load(pickle_in)
+    world = World(world_data)
+
+    return world
 
 def draw_grid():
     for line in range(0, 20):
@@ -61,7 +75,6 @@ class Button():
         screen.blit(self.image, self.rect)
 
         return action
-
 
 class Player:
     def __init__(self, x, y):
@@ -139,9 +152,14 @@ class Player:
             #Check for collision with the enemies  
             if pygame.sprite.spritecollide(self,enemy_group,False):
                 game_over = -1
+            
             # Check for collision with the lava
             if pygame.sprite.spritecollide(self,lava_group,False):
                 game_over = -1
+            
+            # Check for collision with the exit
+            if pygame.sprite.spritecollide(self,exit_group,False):
+                game_over = 1
 
 
             # Update player position
@@ -217,6 +235,9 @@ class World():
                 if tile == 6:
                     lava = Lava(col_count*tile_size, row_count*tile_size + (tile_size//2))
                     lava_group.add(lava)
+                if tile == 8:
+                    exit = Exit(col_count*tile_size, row_count*tile_size  - (tile_size//2))
+                    exit_group.add(exit)
                 col_count += 1
             row_count += 1
 
@@ -252,11 +273,20 @@ class Lava(pygame.sprite.Sprite):
         self.rect.x = x
         self.rect.y = y
 
+class Exit(pygame.sprite.Sprite):
+    def __init__(self,x,y):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.image.load("images/exit.png")
+        self.image = pygame.transform.scale(self.image, (tile_size, int(tile_size * 1.5)))
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
 
 Player = Player(100, screen_height-130)
 
 lava_group = pygame.sprite.Group()
 enemy_group = pygame.sprite.Group()
+exit_group = pygame.sprite.Group()
 
 # Load in level data and create world
 if path.exists(f"levels/{level}_level_data"):
@@ -290,15 +320,33 @@ while run:
 
         enemy_group.draw(screen)
         lava_group.draw(screen)
+        exit_group.draw(screen)
 
         game_over = Player.update(game_over)
 
         # If player has died
         if game_over == -1:
             if restart_button.draw():
-                # print("Restart")
-                Player.reset(100,screen_height-130)
+                world_data = []
+                world = reset_level(level)
                 game_over = 0
+        
+        # If player has won
+        if game_over == 1:
+            # reset game and go to the next level
+            level+=1
+            if level <= max_levels:
+                # reset level 
+                world_data = []
+                world = reset_level(level)
+                game_over = 0
+            else:
+                if restart_button.draw():
+                    level = 1
+                    # reset game from scratch
+                    world_data = []
+                    world = reset_level(level)
+                    game_over = 0
 
         # draw_grid()
 
