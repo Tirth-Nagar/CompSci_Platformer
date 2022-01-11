@@ -3,12 +3,13 @@ from pygame import draw
 from pygame.locals import *
 import pickle
 from os import path
-pygame.mixer.pre_init(44100, -16, 2, 512)
+
+pygame.mixer.pre_init(44100, -16, 1, 512)
 pygame.mixer.init()
 pygame.init()
 
 clock = pygame.time.Clock()
-fps = 165
+fps = 60
 
 screen_width = 1000
 screen_height = 1000
@@ -38,25 +39,30 @@ bg_img = pygame.image.load("images/sky.png")
 restart_img = pygame.image.load("images/restart_btn.png")
 start_img = pygame.image.load("images/start_btn.png")
 exit_img = pygame.image.load("images/exit_btn.png")
+controls_img = pygame.image.load("images/controls_btn.png")
+controls_img = pygame.transform.scale(controls_img, (279, 126))
 
 # Load Sounds
-pygame.mixer.music.load("sounds/music.wav")
-pygame.mixer.music.play(-1, 0.0, 5000)
+lobby_music = pygame.mixer.Sound("sounds/lobby_music.wav")
+lobby_music.set_volume(0.5)
+
+game_music = pygame.mixer.music.load("sounds/game_music.mp3")
+pygame.mixer.music.play(loops=-1)
+pygame.mixer.music.pause()
+# pygame.mixer.music.set_volume(0.5)
 
 coin_fx = pygame.mixer.Sound("sounds/coin.wav")
-coin_fx.set_volume(0.5)
+coin_fx.set_volume(1)
 
 jump_fx = pygame.mixer.Sound("sounds/jump.wav")
-jump_fx.set_volume(0.5)
+jump_fx.set_volume(1)
 
 game_over_fx = pygame.mixer.Sound("sounds/game_over.wav")
-game_over_fx.set_volume(0.5)
-
+game_over_fx.set_volume(1)
 
 def draw_text(text, font, text_col, x, y):
     img = font.render(text, True, text_col)
     screen.blit(img, (x, y))
-
 
 def reset_level(level):
     Player.reset(100, screen_height-130)
@@ -72,14 +78,12 @@ def reset_level(level):
 
     return world
 
-
 def draw_grid():
     for line in range(0, 20):
         pygame.draw.line(screen, (255, 255, 255),
                          (0, line*tile_size), (screen_width, line*tile_size))
         pygame.draw.line(screen, (255, 255, 255),
                          (line*tile_size, 0), (line*tile_size, screen_height))
-
 
 class Button():
     def __init__(self, x, y, image):
@@ -109,7 +113,6 @@ class Button():
         screen.blit(self.image, self.rect)
 
         return action
-
 
 class Player:
     def __init__(self, x, y):
@@ -218,7 +221,7 @@ class Player:
                         dy = 0
                     # Move sideways with the platform
                     if platform.move_x != 0:
-                        self.rect.x += platform.move_x
+                        self.rect.x += platform.move_direction
 
 
             # Update player position
@@ -260,7 +263,6 @@ class Player:
         self.jumped = False
         self.direction = 0
         self.in_air = True
-
 
 class World():
     def __init__(self, data):
@@ -321,7 +323,6 @@ class World():
             screen.blit(tile[0], tile[1])
             # pygame.draw.rect(screen, (255, 255, 255), tile[1], 2)
 
-
 class Enemy(pygame.sprite.Sprite):
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
@@ -338,7 +339,6 @@ class Enemy(pygame.sprite.Sprite):
         if abs(self.move_counter) > 50:
             self.move_direction *= -1
             self.move_counter *= -1
-
 
 class Platform(pygame.sprite.Sprite):
     def __init__(self, x, y, move_x, move_y):
@@ -361,7 +361,6 @@ class Platform(pygame.sprite.Sprite):
             self.move_direction *= -1
             self.move_counter *= -1
 
-
 class Lava(pygame.sprite.Sprite):
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
@@ -372,7 +371,6 @@ class Lava(pygame.sprite.Sprite):
         self.rect.x = x
         self.rect.y = y
 
-
 class Coin(pygame.sprite.Sprite):
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
@@ -381,7 +379,6 @@ class Coin(pygame.sprite.Sprite):
             self.image, (tile_size//2, tile_size//2))
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
-
 
 class Exit(pygame.sprite.Sprite):
     def __init__(self, x, y):
@@ -414,10 +411,10 @@ if path.exists(f"levels/{level}_level_data"):
 world = World(world_data)
 
 # Create Buttons
-restart_button = Button(
-    screen_width//2-50, screen_height//2 + 100, restart_img)
+restart_button = Button(screen_width//2-50, screen_height//2 + 100, restart_img)
 start_button = Button(screen_width//2-350, screen_height//2, start_img)
-exit_button = Button(screen_width//2+100, screen_height//2, exit_img)
+exit_button = Button(screen_width//2-115, screen_height//2+175, exit_img)
+controls_button = Button(screen_width//2+75, screen_height//2, controls_img)
 
 run = True
 while run:
@@ -427,11 +424,16 @@ while run:
     screen.blit(sun_img, (100, 100))
 
     if main_menu == True:
+        lobby_music.play(-1)
         if exit_button.draw():
             run = False
         if start_button.draw():
+            lobby_music.stop()
             main_menu = False
+        if controls_button.draw():
+            pass
     else:
+        pygame.mixer.music.unpause()
         world.draw()
 
         if game_over == 0:
