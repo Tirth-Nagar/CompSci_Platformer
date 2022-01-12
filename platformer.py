@@ -35,7 +35,7 @@ blue = (0, 0, 255)
 
 # Load images
 sun_img = pygame.image.load("images/sun.png")
-bg_img = pygame.image.load("images/sky.png")
+bg_img = pygame.image.load("images/sky1.png")
 restart_img = pygame.image.load("images/restart_btn.png")
 start_img = pygame.image.load("images/start_btn.png")
 exit_img = pygame.image.load("images/exit_btn.png")
@@ -43,13 +43,10 @@ controls_img = pygame.image.load("images/controls_btn.png")
 controls_img = pygame.transform.scale(controls_img, (279, 126))
 
 # Load Sounds
-lobby_music = pygame.mixer.Sound("sounds/lobby_music.wav")
+lobby_music = pygame.mixer.Sound("sounds/lobby_music.mp3")
 lobby_music.set_volume(0.5)
 
-game_music = pygame.mixer.music.load("sounds/game_music.mp3")
-pygame.mixer.music.play(loops=-1)
-pygame.mixer.music.pause()
-# pygame.mixer.music.set_volume(0.5)
+pygame.mixer.music.load("sounds/lvl_1.mp3")
 
 coin_fx = pygame.mixer.Sound("sounds/coin.wav")
 coin_fx.set_volume(1)
@@ -59,6 +56,9 @@ jump_fx.set_volume(1)
 
 game_over_fx = pygame.mixer.Sound("sounds/game_over.wav")
 game_over_fx.set_volume(1)
+
+def play_music():
+    game_music = ["lvl_1.mp3", "lvl_2.mp3", "lvl_3.mp3", "lvl_4.mp3", "lvl_5.mp3", "lvl_6.mp3", "lvl_7.mp3"]
 
 def draw_text(text, font, text_col, x, y):
     img = font.render(text, True, text_col)
@@ -114,7 +114,7 @@ class Button():
 
         return action
 
-class Player:
+class Player():
     def __init__(self, x, y):
         self.reset(x, y)
 
@@ -230,7 +230,7 @@ class Player:
 
         elif game_over == -1:
             self.image = self.dead_image
-            draw_text("Game Over", font, blue,
+            draw_text("Game Over", font, white,
                       (screen_width//2)-140, screen_height//2)
             if self.rect.y > 50:
                 self.rect.y -= 5
@@ -424,18 +424,17 @@ while run:
     screen.blit(sun_img, (100, 100))
 
     if main_menu == True:
-        lobby_music.play(-1)
+        lobby_music.play(-1,fade_ms=5000)
         if exit_button.draw():
             run = False
         if start_button.draw():
             lobby_music.stop()
             main_menu = False
+            pygame.mixer.music.play(loops=-1)
         if controls_button.draw():
             pass
     else:
-        pygame.mixer.music.unpause()
         world.draw()
-
         if game_over == 0:
             enemy_group.update()
             platform_group.update()
@@ -472,7 +471,7 @@ while run:
                 world = reset_level(level)
                 game_over = 0
             else:
-                draw_text("YOU WIN!", font, blue,
+                draw_text("YOU WIN!", font, white,
                           (screen_width//2)-140, screen_height//2)
                 if restart_button.draw():
                     level = 1
