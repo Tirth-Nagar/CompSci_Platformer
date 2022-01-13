@@ -35,7 +35,7 @@ blue = (0, 0, 255)
 
 # Load images
 sun_img = pygame.image.load("images/sun.png")
-bg_img = pygame.image.load("images/sky1.png")
+bg_img = pygame.image.load("images/Night_Sky.png")
 restart_img = pygame.image.load("images/restart_btn.png")
 start_img = pygame.image.load("images/start_btn.png")
 exit_img = pygame.image.load("images/exit_btn.png")
@@ -46,8 +46,6 @@ controls_img = pygame.transform.scale(controls_img, (279, 126))
 lobby_music = pygame.mixer.Sound("sounds/lobby_music.mp3")
 lobby_music.set_volume(0.5)
 
-pygame.mixer.music.load("sounds/lvl_1.mp3")
-
 coin_fx = pygame.mixer.Sound("sounds/coin.wav")
 coin_fx.set_volume(1)
 
@@ -57,8 +55,10 @@ jump_fx.set_volume(1)
 game_over_fx = pygame.mixer.Sound("sounds/game_over.wav")
 game_over_fx.set_volume(1)
 
-def play_music():
-    game_music = ["lvl_1.mp3", "lvl_2.mp3", "lvl_3.mp3", "lvl_4.mp3", "lvl_5.mp3", "lvl_6.mp3", "lvl_7.mp3"]
+def play_music(level):
+    game_music = ["lvl_0.mp3", "lvl_1.mp3", "lvl_2.mp3", "lvl_3.mp3", "lvl_4.mp3", "lvl_5.mp3", "lvl_6.mp3", "lvl_7.mp3"]
+    pygame.mixer.music.load("sounds/" + game_music[level])
+    pygame.mixer.music.play()
 
 def draw_text(text, font, text_col, x, y):
     img = font.render(text, True, text_col)
@@ -430,7 +430,7 @@ while run:
         if start_button.draw():
             lobby_music.stop()
             main_menu = False
-            pygame.mixer.music.play(loops=-1)
+            play_music(level)
         if controls_button.draw():
             pass
     else:
@@ -465,6 +465,8 @@ while run:
         if game_over == 1:
             # reset game and go to the next level
             level += 1
+            print(level)
+            play_music(level)
             if level <= max_levels:
                 # reset level
                 world_data = []
