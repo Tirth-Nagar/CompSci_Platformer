@@ -20,6 +20,7 @@ pygame.display.set_caption("Dreamscape")
 # Define Font
 font = pygame.font.SysFont("Bauhaus 93", 70)
 font_score = pygame.font.SysFont("Bauhaus 93", 30)
+font_title = pygame.font.SysFont("Bauhaus 93", 90)
 
 # Define game variables
 tile_size = 50
@@ -412,9 +413,9 @@ world = World(world_data)
 
 # Create Buttons
 restart_button = Button(screen_width//2-50, screen_height//2 + 100, restart_img)
-start_button = Button(screen_width//2-350, screen_height//2, start_img)
-exit_button = Button(screen_width//2-115, screen_height//2+175, exit_img)
-controls_button = Button(screen_width//2+75, screen_height//2, controls_img)
+start_button = Button(screen_width//2-350, screen_height//2+75, start_img)
+exit_button = Button(screen_width//2-115, screen_height//2+250, exit_img)
+controls_button = Button(screen_width//2+75, screen_height//2+75, controls_img)
 
 run = True
 while run:
@@ -425,6 +426,7 @@ while run:
 
     if main_menu == True:
         lobby_music.play(-1,fade_ms=5000)
+        draw_text("Dreamscape",font_title,white,screen_width//2-245, screen_height//2-100)
         if exit_button.draw():
             run = False
         if start_button.draw():
