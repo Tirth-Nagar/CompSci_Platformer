@@ -59,7 +59,7 @@ game_over_fx.set_volume(1)
 def play_music(level):
     game_music = ["lvl_0.mp3", "lvl_1.mp3", "lvl_2.mp3", "lvl_3.mp3", "lvl_4.mp3", "lvl_5.mp3", "lvl_6.mp3", "lvl_7.mp3"]
     pygame.mixer.music.load("sounds/" + game_music[level])
-    pygame.mixer.music.play()
+    pygame.mixer.music.play(loops=-1)
 
 def draw_text(text, font, text_col, x, y):
     img = font.render(text, True, text_col)
