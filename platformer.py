@@ -1,3 +1,4 @@
+from math import fabs
 import pygame
 from pygame import draw
 from pygame.locals import *
@@ -42,6 +43,9 @@ start_img = pygame.image.load("images/start_btn.png")
 exit_img = pygame.image.load("images/exit_btn.png")
 controls_img = pygame.image.load("images/controls_btn.png")
 controls_img = pygame.transform.scale(controls_img, (279, 126))
+controls_background = pygame.image.load("images/Controls_BG.png")
+back_img = pygame.image.load("images/back.png")
+back_img = pygame.transform.scale(back_img, (150, 75))
 
 # Load Sounds
 lobby_music = pygame.mixer.Sound("sounds/lobby_music.mp3")
@@ -416,8 +420,11 @@ restart_button = Button(screen_width//2-50, screen_height//2 + 100, restart_img)
 start_button = Button(screen_width//2-350, screen_height//2+75, start_img)
 exit_button = Button(screen_width//2-115, screen_height//2+250, exit_img)
 controls_button = Button(screen_width//2+75, screen_height//2+75, controls_img)
+back_button = Button(screen_width//2-475, 50, back_img)
 
+controls = False
 run = True
+
 while run:
     clock.tick(fps)
 
@@ -434,7 +441,18 @@ while run:
             main_menu = False
             play_music(level)
         if controls_button.draw():
-            pass
+            main_menu = False
+            controls = True
+    
+    elif controls == True:
+        screen.fill(white)
+        screen.blit(controls_background, (0, 0))
+        draw_text("Controls",font_title,white,screen_width//2-150, 50)
+        if back_button.draw():
+            controls = False
+            main_menu = True
+        pygame.display.update()
+
     else:
         world.draw()
         if game_over == 0:
