@@ -12,6 +12,7 @@ pygame.init()
 clock = pygame.time.Clock()
 fps = 165
 
+# Define screen dimensions
 screen_width = 1000
 screen_height = 1000
 
@@ -66,15 +67,19 @@ jump_fx.set_volume(1)
 game_over_fx = pygame.mixer.Sound("sounds/game_over.wav")
 game_over_fx.set_volume(1)
 
+# Function to play music
 def play_music(level):
-    game_music = ["lvl_0.mp3", "lvl_1.mp3", "lvl_2.mp3", "lvl_3.mp3", "lvl_4.mp3", "lvl_5.mp3", "lvl_6.mp3", "lvl_7.mp3"]
+    game_music = ["lvl_0.mp3", "lvl_1.mp3", "lvl_2.mp3", "lvl_3.mp3",
+                  "lvl_4.mp3", "lvl_5.mp3", "lvl_6.mp3", "lvl_7.mp3"]
     pygame.mixer.music.load("sounds/" + game_music[level])
     pygame.mixer.music.play(loops=-1)
 
+# Function to draw text on screen
 def draw_text(text, font, text_col, x, y):
     img = font.render(text, True, text_col)
     screen.blit(img, (x, y))
 
+# Function to reset level
 def reset_level(level):
     Player.reset(100, screen_height-130)
     enemy_group.empty()
@@ -89,6 +94,7 @@ def reset_level(level):
 
     return world
 
+# Function to draw gridlines to **debug**
 def draw_grid():
     for line in range(0, 20):
         pygame.draw.line(screen, (255, 255, 255),
@@ -96,6 +102,7 @@ def draw_grid():
         pygame.draw.line(screen, (255, 255, 255),
                          (line*tile_size, 0), (line*tile_size, screen_height))
 
+# Button class to simply draw buttons and check if they are clicked
 class Button():
     def __init__(self, x, y, image):
         self.image = image
@@ -125,6 +132,7 @@ class Button():
 
         return action
 
+# Player class to define player properties and movement and check for collisions
 class Player():
     def __init__(self, x, y):
         self.reset(x, y)
@@ -234,7 +242,6 @@ class Player():
                     if platform.move_x != 0:
                         self.rect.x += platform.move_direction
 
-
             # Update player position
             self.rect.x += dx
             self.rect.y += dy
@@ -275,6 +282,7 @@ class Player():
         self.direction = 0
         self.in_air = True
 
+# World class to draw the world and
 class World():
     def __init__(self, data):
         self.tile_list = []
@@ -334,6 +342,7 @@ class World():
             screen.blit(tile[0], tile[1])
             # pygame.draw.rect(screen, (255, 255, 255), tile[1], 2)
 
+# Enemy class to draw the enemies
 class Enemy(pygame.sprite.Sprite):
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
@@ -351,6 +360,7 @@ class Enemy(pygame.sprite.Sprite):
             self.move_direction *= -1
             self.move_counter *= -1
 
+# Platform class to draw the platforms and control their movement
 class Platform(pygame.sprite.Sprite):
     def __init__(self, x, y, move_x, move_y):
         pygame.sprite.Sprite.__init__(self)
@@ -372,6 +382,7 @@ class Platform(pygame.sprite.Sprite):
             self.move_direction *= -1
             self.move_counter *= -1
 
+# Lava class to draw the lava
 class Lava(pygame.sprite.Sprite):
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
@@ -382,6 +393,7 @@ class Lava(pygame.sprite.Sprite):
         self.rect.x = x
         self.rect.y = y
 
+# Coin class to draw the coins
 class Coin(pygame.sprite.Sprite):
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
@@ -391,6 +403,7 @@ class Coin(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
 
+# Exit class to draw the exits
 class Exit(pygame.sprite.Sprite):
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
@@ -401,9 +414,10 @@ class Exit(pygame.sprite.Sprite):
         self.rect.x = x
         self.rect.y = y
 
-
+# Create player instance and starting position
 Player = Player(100, screen_height-130)
 
+# Add sprites to groups
 platform_group = pygame.sprite.Group()
 lava_group = pygame.sprite.Group()
 coin_group = pygame.sprite.Group()
@@ -419,6 +433,7 @@ if path.exists(f"levels/{level}_level_data"):
     pickle_in = open(f"levels/{level}_level_data", "rb")
     world_data = pickle.load(pickle_in)
 
+# Create the world using the world class
 world = World(world_data)
 
 # Create Buttons
@@ -431,15 +446,17 @@ back_button = Button(screen_width//2-475, 50, back_img)
 controls = False
 run = True
 
+# Game Loop
 while run:
     clock.tick(fps)
-
+    # Show background
     screen.blit(bg_img, (0, 0))
     screen.blit(moon_img, (-50, -25))
 
     if main_menu == True:
-        lobby_music.play(-1,fade_ms=5000)
-        draw_text("Dreamscape",font_title,white,screen_width//2-265 , screen_height//2-100)
+        lobby_music.play(-1, fade_ms=5000)
+        draw_text("Dreamscape", font_title, white,
+                  screen_width//2-265, screen_height//2-100)
         if exit_button.draw():
             run = False
         if start_button.draw():
@@ -449,17 +466,18 @@ while run:
         if controls_button.draw():
             main_menu = False
             controls = True
-    
+
     elif controls == True:
+        # Display controls
         screen.fill(white)
         screen.blit(controls_background, (0, 0))
-        draw_text("Controls",font_title,white,screen_width//2-175, 50)
-        draw_text("Move Left:",font_text,white,75, 225)
-        draw_text("[Left Arrow]",font_text,white,525, 225)
-        draw_text("Move Right:",font_text,white,75, 400)
-        draw_text("[Right Arrow]",font_text,white,525, 400)
-        draw_text("Jump:",font_text,white,75, 575)
-        draw_text("[Spacebar]",font_text,white,525, 575)
+        draw_text("Controls", font_title, white, screen_width//2-175, 50)
+        draw_text("Move Left:", font_text, white, 75, 225)
+        draw_text("[Left Arrow]", font_text, white, 525, 225)
+        draw_text("Move Right:", font_text, white, 75, 400)
+        draw_text("[Right Arrow]", font_text, white, 525, 400)
+        draw_text("Jump:", font_text, white, 75, 575)
+        draw_text("[Spacebar]", font_text, white, 525, 575)
         if back_button.draw():
             controls = False
             main_menu = True
@@ -467,7 +485,8 @@ while run:
 
     else:
         world.draw()
-        draw_text("Level " + str(level), font_score, white, screen_width//2-40, 10)
+        draw_text("Level " + str(level), font_score,
+                  white, screen_width//2-40, 10)
         if game_over == 0:
             enemy_group.update()
             platform_group.update()
@@ -476,8 +495,9 @@ while run:
                 score += 1  # Update Score
                 coin_fx.play()
             draw_text("X" + str(score), font_score, white, tile_size+30, 10)
-            # print(score)
+            # print(score) **Debugging**
 
+        # Draw all sprites on the screen
         platform_group.draw(screen)
         enemy_group.draw(screen)
         lava_group.draw(screen)
@@ -516,7 +536,7 @@ while run:
                     game_over = 0
                     score = 0
 
-        # draw_grid()
+        # draw_grid() **debugging**
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
