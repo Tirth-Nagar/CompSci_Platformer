@@ -10,7 +10,7 @@ pygame.mixer.init()
 pygame.init()
 
 clock = pygame.time.Clock()
-fps = 60
+fps = 165
 
 screen_width = 1000
 screen_height = 1000
@@ -411,7 +411,7 @@ enemy_group = pygame.sprite.Group()
 exit_group = pygame.sprite.Group()
 
 # Create dummy coin for showing the player how many coins they have
-score_coin = Coin(tile_size//2, tile_size//2)
+score_coin = Coin(125//2, tile_size//2)
 coin_group.add(score_coin)
 
 # Load in level data and create world
@@ -467,6 +467,7 @@ while run:
 
     else:
         world.draw()
+        draw_text("Level " + str(level), font_score, white, screen_width//2-40, 10)
         if game_over == 0:
             enemy_group.update()
             platform_group.update()
@@ -474,7 +475,7 @@ while run:
             if pygame.sprite.spritecollide(Player, coin_group, True):
                 score += 1  # Update Score
                 coin_fx.play()
-            draw_text("X" + str(score), font_score, white, tile_size-10, 10)
+            draw_text("X" + str(score), font_score, white, tile_size+30, 10)
             # print(score)
 
         platform_group.draw(screen)
