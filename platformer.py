@@ -1,10 +1,16 @@
-from math import fabs
+# Author: Tirth Nagar and Arjan
+# Date: January 16th, 2022
+# File Name: platformer.py
+# Description: Simple platformer game made for computer science class
+
+# Import statements
 import pygame
-from pygame import draw
 from pygame.locals import *
+from pygame import mixer
 import pickle
 from os import path
 
+# Pygame Initializations
 pygame.mixer.pre_init(44100, -16, 1, 512)
 pygame.mixer.init()
 pygame.init()
