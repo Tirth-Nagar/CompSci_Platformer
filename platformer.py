@@ -22,6 +22,7 @@ pygame.display.set_caption("Dreamscape")
 font = pygame.font.SysFont("Bauhaus 93", 70)
 font_score = pygame.font.SysFont("Bauhaus 93", 30)
 font_title = pygame.font.SysFont("Bauhaus 93", 90)
+font_text = pygame.font.SysFont("Bauhaus 93", 75)
 
 # Define game variables
 tile_size = 50
@@ -36,14 +37,19 @@ white = (255, 255, 255)
 blue = (0, 0, 255)
 
 # Load images
-sun_img = pygame.image.load("images/sun.png")
+moon_img = pygame.image.load("images/Moon.png")
+moon_img = pygame.transform.scale(moon_img, (500, 500))
+
 bg_img = pygame.image.load("images/Night_Sky.png")
 restart_img = pygame.image.load("images/restart_btn.png")
 start_img = pygame.image.load("images/start_btn.png")
 exit_img = pygame.image.load("images/exit_btn.png")
+
 controls_img = pygame.image.load("images/controls_btn.png")
 controls_img = pygame.transform.scale(controls_img, (279, 126))
+
 controls_background = pygame.image.load("images/Controls_BG.png")
+
 back_img = pygame.image.load("images/back.png")
 back_img = pygame.transform.scale(back_img, (150, 75))
 
@@ -429,11 +435,11 @@ while run:
     clock.tick(fps)
 
     screen.blit(bg_img, (0, 0))
-    screen.blit(sun_img, (100, 100))
+    screen.blit(moon_img, (-50, -25))
 
     if main_menu == True:
         lobby_music.play(-1,fade_ms=5000)
-        draw_text("Dreamscape",font_title,white,screen_width//2-245, screen_height//2-100)
+        draw_text("Dreamscape",font_title,white,screen_width//2-265 , screen_height//2-100)
         if exit_button.draw():
             run = False
         if start_button.draw():
@@ -447,7 +453,13 @@ while run:
     elif controls == True:
         screen.fill(white)
         screen.blit(controls_background, (0, 0))
-        draw_text("Controls",font_title,white,screen_width//2-150, 50)
+        draw_text("Controls",font_title,white,screen_width//2-175, 50)
+        draw_text("Move Left:",font_text,white,75, 225)
+        draw_text("[Left Arrow]",font_text,white,525, 225)
+        draw_text("Move Right:",font_text,white,75, 400)
+        draw_text("[Right Arrow]",font_text,white,525, 400)
+        draw_text("Jump:",font_text,white,75, 575)
+        draw_text("[Spacebar]",font_text,white,525, 575)
         if back_button.draw():
             controls = False
             main_menu = True
