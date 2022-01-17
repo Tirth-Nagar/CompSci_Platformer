@@ -74,18 +74,28 @@ game_over_fx = pygame.mixer.Sound("sounds/game_over.wav")
 game_over_fx.set_volume(1)
 
 # Function to play music
+
+
 def play_music(level):
     game_music = ["lvl_0.mp3", "lvl_1.mp3", "lvl_2.mp3", "lvl_3.mp3",
-                  "lvl_4.mp3", "lvl_5.mp3", "lvl_6.mp3", "lvl_7.mp3"]
-    pygame.mixer.music.load("sounds/" + game_music[level])
-    pygame.mixer.music.play(loops=-1)
+                  "lvl_4.mp3", "lvl_5.mp3", "lvl_6.mp3", "lvl_7.mp3","end_music.mp3"]
+    if level <= 7:
+        pygame.mixer.music.load("sounds/" + game_music[level])
+        pygame.mixer.music.play(loops=-1)
+    elif level == 8:
+        pygame.mixer.music.load("sounds/end_music.mp3")
+        pygame.mixer.music.play(loops=-1)
 
 # Function to draw text on screen
+
+
 def draw_text(text, font, text_col, x, y):
     img = font.render(text, True, text_col)
     screen.blit(img, (x, y))
 
 # Function to reset level
+
+
 def reset_level(level):
     Player.reset(100, screen_height-130)
     enemy_group.empty()
@@ -101,6 +111,8 @@ def reset_level(level):
     return world
 
 # Function to draw gridlines to **debug**
+
+
 def draw_grid():
     for line in range(0, 20):
         pygame.draw.line(screen, (255, 255, 255),
@@ -109,6 +121,8 @@ def draw_grid():
                          (line*tile_size, 0), (line*tile_size, screen_height))
 
 # Button class to simply draw buttons and check if they are clicked
+
+
 class Button():
     def __init__(self, x, y, image):
         self.image = image
@@ -139,6 +153,8 @@ class Button():
         return action
 
 # Player class to define player properties and movement and check for collisions
+
+
 class Player():
     def __init__(self, x, y):
         self.reset(x, y)
@@ -289,6 +305,8 @@ class Player():
         self.in_air = True
 
 # World class to draw the world and
+
+
 class World():
     def __init__(self, data):
         self.tile_list = []
@@ -349,6 +367,8 @@ class World():
             # pygame.draw.rect(screen, (255, 255, 255), tile[1], 2)
 
 # Enemy class to draw the enemies
+
+
 class Enemy(pygame.sprite.Sprite):
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
@@ -367,6 +387,8 @@ class Enemy(pygame.sprite.Sprite):
             self.move_counter *= -1
 
 # Platform class to draw the platforms and control their movement
+
+
 class Platform(pygame.sprite.Sprite):
     def __init__(self, x, y, move_x, move_y):
         pygame.sprite.Sprite.__init__(self)
@@ -389,6 +411,8 @@ class Platform(pygame.sprite.Sprite):
             self.move_counter *= -1
 
 # Lava class to draw the lava
+
+
 class Lava(pygame.sprite.Sprite):
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
@@ -400,6 +424,8 @@ class Lava(pygame.sprite.Sprite):
         self.rect.y = y
 
 # Coin class to draw the coins
+
+
 class Coin(pygame.sprite.Sprite):
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
@@ -410,6 +436,8 @@ class Coin(pygame.sprite.Sprite):
         self.rect.center = (x, y)
 
 # Exit class to draw the exits
+
+
 class Exit(pygame.sprite.Sprite):
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
@@ -419,6 +447,7 @@ class Exit(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
+
 
 # Create player instance and starting position
 Player = Player(100, screen_height-130)
@@ -443,7 +472,8 @@ if path.exists(f"levels/{level}_level_data"):
 world = World(world_data)
 
 # Create Buttons
-restart_button = Button(screen_width//2-50, screen_height//2 + 100, restart_img)
+restart_button = Button(
+    screen_width//2-50, screen_height//2 + 100, restart_img)
 start_button = Button(screen_width//2-350, screen_height//2+75, start_img)
 exit_button = Button(screen_width//2-115, screen_height//2+250, exit_img)
 controls_button = Button(screen_width//2+75, screen_height//2+75, controls_img)
@@ -491,8 +521,12 @@ while run:
 
     else:
         world.draw()
-        draw_text("Level " + str(level), font_score,
+        if level <= 7:
+            draw_text("Level " + str(level), font_score,
                   white, screen_width//2-40, 10)
+        elif level >= 8:
+            draw_text("Congratulations!", font_score,
+                  white, screen_width//2-100, 10)
         if game_over == 0:
             enemy_group.update()
             platform_group.update()
@@ -524,18 +558,21 @@ while run:
         if game_over == 1:
             # reset game and go to the next level
             level += 1
-            print(level)
-            play_music(level)
+            print(level) # Debugging
             if level <= max_levels:
+                play_music(level)
                 # reset level
                 world_data = []
                 world = reset_level(level)
                 game_over = 0
             else:
+                play_music(level)
                 draw_text("YOU WIN!", font, white,
                           (screen_width//2)-140, screen_height//2)
+                          
                 if restart_button.draw():
-                    level = 1
+                    level = 0
+                    play_music(level)
                     # reset game from scratch
                     world_data = []
                     world = reset_level(level)
