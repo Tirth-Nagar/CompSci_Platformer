@@ -35,7 +35,7 @@ font_text = pygame.font.SysFont("Bauhaus 93", 75)
 tile_size = 50
 game_over = 0
 main_menu = True
-level = 0
+level = 7
 max_levels = 7
 score = 0
 
@@ -560,7 +560,7 @@ while run:
             level += 1
             print(level) # Debugging
             if level <= max_levels:
-                play_music(level)
+                # play_music(level)
                 # reset level
                 world_data = []
                 world = reset_level(level)
