@@ -35,7 +35,7 @@ font_text = pygame.font.SysFont("Bauhaus 93", 75)
 tile_size = 50
 game_over = 0
 main_menu = True
-level = 7
+level = 0
 max_levels = 7
 score = 0
 
@@ -472,8 +472,7 @@ if path.exists(f"levels/{level}_level_data"):
 world = World(world_data)
 
 # Create Buttons
-restart_button = Button(
-    screen_width//2-50, screen_height//2 + 100, restart_img)
+restart_button = Button(screen_width//2-50, screen_height//2 + 100, restart_img)
 start_button = Button(screen_width//2-350, screen_height//2+75, start_img)
 exit_button = Button(screen_width//2-115, screen_height//2+250, exit_img)
 controls_button = Button(screen_width//2+75, screen_height//2+75, controls_img)
@@ -521,12 +520,14 @@ while run:
 
     else:
         world.draw()
+
         if level <= 7:
             draw_text("Level " + str(level), font_score,
                   white, screen_width//2-40, 10)
         elif level >= 8:
             draw_text("Congratulations!", font_score,
                   white, screen_width//2-100, 10)
+        
         if game_over == 0:
             enemy_group.update()
             platform_group.update()
@@ -560,7 +561,7 @@ while run:
             level += 1
             print(level) # Debugging
             if level <= max_levels:
-                # play_music(level)
+                play_music(level)
                 # reset level
                 world_data = []
                 world = reset_level(level)
