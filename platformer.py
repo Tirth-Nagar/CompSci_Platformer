@@ -16,7 +16,7 @@ pygame.mixer.init()
 pygame.init()
 
 clock = pygame.time.Clock()
-fps = 165
+fps = 60
 
 # Define screen dimensions
 screen_width = 1000
@@ -51,6 +51,7 @@ moon_img = pygame.transform.scale(moon_img, (500, 500))
 bg_img = pygame.image.load("images/Night_Sky.png")
 restart_img = pygame.image.load("images/restart_btn.png")
 start_img = pygame.image.load("images/start_btn.png")
+
 exit_img = pygame.image.load("images/exit_btn.png")
 
 controls_img = pygame.image.load("images/controls_btn.png")
@@ -281,7 +282,7 @@ class Player():
         # pygame.draw.rect(screen, (255, 255, 255), self.rect, 2)
 
         return game_over
-        
+
     # Reset Player
     def reset(self, x, y):
         self.images_right = []
@@ -561,7 +562,7 @@ while run:
         if game_over == 1:
             # reset game and go to the next level
             level += 1
-            print(level) # Debugging
+            # print(level) # Debugging
             if level <= max_levels:
                 play_music(level)
                 # reset level
@@ -572,7 +573,7 @@ while run:
                 play_music(level)
                 draw_text("YOU WIN!", font, white,
                           (screen_width//2)-140, screen_height//2)
-                          
+
                 if restart_button.draw():
                     level = 0
                     play_music(level)
