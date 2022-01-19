@@ -23,12 +23,13 @@ screen_width = 1000
 screen_height = 1000
 
 screen = pygame.display.set_mode((screen_width, screen_height))
-pygame.display.set_caption("Dreamscape")
+pygame.display.set_caption("Forlorn")
 
 # Define Font
 font = pygame.font.SysFont("Bauhaus 93", 70)
 font_score = pygame.font.SysFont("Bauhaus 93", 30)
-font_title = pygame.font.SysFont("Bauhaus 93", 90)
+font_title = pygame.font.SysFont("Times New Roman", 90)
+font_text_title = pygame.font.SysFont("Times New Roman", 75)
 font_text = pygame.font.SysFont("Bauhaus 93", 75)
 
 # Define game variables
@@ -280,7 +281,8 @@ class Player():
         # pygame.draw.rect(screen, (255, 255, 255), self.rect, 2)
 
         return game_over
-
+        
+    # Reset Player
     def reset(self, x, y):
         self.images_right = []
         self.images_left = []
@@ -490,8 +492,8 @@ while run:
 
     if main_menu == True:
         lobby_music.play(-1, fade_ms=5000)
-        draw_text("Dreamscape", font_title, white,
-                  screen_width//2-265, screen_height//2-100)
+        draw_text("Forlorn", font_title, white,
+                  screen_width//2-125, screen_height//2-100)
         if exit_button.draw():
             run = False
         if start_button.draw():
@@ -507,11 +509,11 @@ while run:
         screen.fill(white)
         screen.blit(controls_background, (0, 0))
         draw_text("Controls", font_title, white, screen_width//2-175, 50)
-        draw_text("Move Left:", font_text, white, 75, 225)
+        draw_text("Move Left:", font_text_title, white, 75, 225)
         draw_text("[Left Arrow]", font_text, white, 525, 225)
-        draw_text("Move Right:", font_text, white, 75, 400)
+        draw_text("Move Right:", font_text_title, white, 75, 400)
         draw_text("[Right Arrow]", font_text, white, 525, 400)
-        draw_text("Jump:", font_text, white, 75, 575)
+        draw_text("Jump:", font_text_title, white, 75, 575)
         draw_text("[Spacebar]", font_text, white, 525, 575)
         if back_button.draw():
             controls = False
