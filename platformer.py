@@ -16,7 +16,7 @@ pygame.mixer.init()
 pygame.init()
 
 clock = pygame.time.Clock()
-fps = 60
+fps = 165
 
 # Define screen dimensions
 screen_width = 1000
