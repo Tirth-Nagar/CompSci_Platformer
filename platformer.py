@@ -36,7 +36,7 @@ tile_size = 50
 game_over = 0
 main_menu = True
 level = 0
-max_levels = 7
+max_levels = 10
 score = 0
 
 # Define Colours
@@ -78,11 +78,11 @@ game_over_fx.set_volume(1)
 
 def play_music(level):
     game_music = ["lvl_0.mp3", "lvl_1.mp3", "lvl_2.mp3", "lvl_3.mp3",
-                  "lvl_4.mp3", "lvl_5.mp3", "lvl_6.mp3", "lvl_7.mp3","end_music.mp3"]
-    if level <= 7:
+                  "lvl_4.mp3", "lvl_5.mp3", "lvl_6.mp3", "lvl_7.mp3","lvl_8.mp3","lvl_9.mp3","lvl_10.mp3"]
+    if level <= 10:
         pygame.mixer.music.load("sounds/" + game_music[level])
         pygame.mixer.music.play(loops=-1)
-    elif level == 8:
+    elif level == 11:
         pygame.mixer.music.load("sounds/end_music.mp3")
         pygame.mixer.music.play(loops=-1)
 
@@ -521,10 +521,10 @@ while run:
     else:
         world.draw()
 
-        if level <= 7:
+        if level <= 10:
             draw_text("Level " + str(level), font_score,
                   white, screen_width//2-40, 10)
-        elif level >= 8:
+        elif level >= 11:
             draw_text("Congratulations!", font_score,
                   white, screen_width//2-100, 10)
         
